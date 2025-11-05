@@ -1,0 +1,32 @@
+{
+  "name": "ats-resume-analyzer",
+  "version": "1.0.0",
+  "description": "Backend API for Resume Optimizer using OpenAI/Gemini",
+  "main": "server.js",
+  "type": "module",
+  "scripts":
+  {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+
+  "keywords": 
+  [
+    "openai",
+    "gemini",
+    "resume",
+    "ats"
+  ],
+
+
+  "author": "",
+  "license": "ISC",
+
+
+  "dependencies": 
+  {
+    "@google/genai": "^1.28.0",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
