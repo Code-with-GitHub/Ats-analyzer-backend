@@ -6,7 +6,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';  // ✅ FIXED
 
 dotenv.config();
 
@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 const AI_PROVIDER = process.env.AI_PROVIDER || 'openai';
 
 // ==========================================
-// 📝 AI CLIENT INITIALIZATION (FIXED)
+// 🔐 AI CLIENT INITIALIZATION (FIXED)
 // ==========================================
 
 let aiClient;
@@ -40,9 +40,10 @@ if (AI_PROVIDER === 'gemini') {
     process.exit(1);
   }
   
+  // ✅ FIXED: Correct initialization
   aiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   geminiModel = aiClient.getGenerativeModel({ 
-    model: 'gemini-2.5-flash'  // ✅ Updated to correct model
+    model: 'gemini-2.0-flash-exp'  // ✅ Updated model
   });
   
   console.log('✅ Gemini client initialized');
@@ -95,7 +96,7 @@ async function callAI(systemPrompt, userPrompt) {
       
       const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
       const result = await geminiModel.generateContent(fullPrompt);
-      const response = await result.response;
+      const response = result.response;
       
       return response.text();
     }
@@ -251,7 +252,7 @@ app.post('/api/match-job', async (req, res) => {
 });
 
 // ==========================================
-// ❤️ ROUTE: HEALTH CHECK (FIXED)
+// ❤️ ROUTE: HEALTH CHECK
 // ==========================================
 
 app.get('/api/health', (req, res) => {
