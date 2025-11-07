@@ -14,6 +14,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const AI_PROVIDER = process.env.AI_PROVIDER || 'openai';
 
+
+
+// Define your routes
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello from Express on Vercel!' });
+});
+
 // ==========================================
 // 🔐 AI CLIENT INITIALIZATION (FIXED)
 // ==========================================
