@@ -14,18 +14,6 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const AI_PROVIDER = process.env.AI_PROVIDER || 'openai';
 
-
-
-// Define your routes
-app.get('/', (req, res) => {
-  res.json({ message: 'Hello from Express on Vercel!' });
-});
-
-// local dev only:
-if (!process.env.VERCEL) {
-  const PORT = process.env.PORT || 5004;
-  app.listen(PORT, () => console.log(`API on http://localhost:${PORT}`));
-}
 // ==========================================
 // 🔐 AI CLIENT INITIALIZATION (FIXED)
 // ==========================================
@@ -46,6 +34,24 @@ if (AI_PROVIDER === 'openai') {
   console.log('✅ OpenAI client initialized');
 }
 
+// OPENROUTER (new)
+if (AI_PROVIDER === 'openrouter') {
+  if (!process.env.OPENROUTER_API_KEY) {
+    console.error('❌ ERROR: OPENROUTER_API_KEY not found');
+    process.exit(1);
+  }
+  aiClient = new OpenAI({
+    apiKey: process.env.OPENROUTER_API_KEY,
+    baseURL: 'https://openrouter.ai/api/v1',
+    // optional headers recommended by OpenRouter:
+    defaultHeaders: {
+      'HTTP-Referer': process.env.FRONTEND_URL || 'http://localhost:5173',
+      'X-Title': 'ATS Resume Optimizer'
+    }
+  });
+  console.log('✅ OpenRouter client initialized');
+}
+
 if (AI_PROVIDER === 'gemini') {
   if (!process.env.GEMINI_API_KEY) {
     console.error('❌ ERROR: GEMINI_API_KEY not found in .env file');
@@ -55,7 +61,7 @@ if (AI_PROVIDER === 'gemini') {
   // ✅ FIXED: Correct initialization
   aiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   geminiModel = aiClient.getGenerativeModel({ 
-    model: 'gemini-2.0-flash-exp'  // ✅ Updated model
+    model: 'gemini-2.5-flash'  // ✅ Updated model
   });
   
   console.log('✅ Gemini client initialized');
@@ -80,27 +86,28 @@ app.use(express.urlencoded({ extended: true }));
 async function callAI(systemPrompt, userPrompt) {
   try {
     // ===== OpenAI Implementation =====
-    if (AI_PROVIDER === 'openai') {
-      console.log('🤖 Calling OpenAI GPT-4...');
+    if (AI_PROVIDER === 'openai' || AI_PROVIDER === 'openrouter') {
       
-      const response = await aiClient.chat.completions.create({
-        model: 'gpt-4o',
+       const modelName = (AI_PROVIDER === 'openrouter')
+        ? 'google/gemini-1.5-flash'  // or any model you’ve enabled in OpenRouter
+        : 'gpt-4o';
+
+      console.log(`🤖 Calling ${modelName}` );
+      
+           const response = await aiClient.chat.completions.create({
+        model: modelName,
         messages: [
-          {
-            role: 'system',
-            content: systemPrompt,
-          },
-          {
-            role: 'user',
-            content: userPrompt,
-          },
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
         ],
         temperature: 0.7,
         max_tokens: 2000,
       });
-      
       return response.choices[0].message.content;
     }
+
+
+
     
     // ===== Gemini Implementation (FIXED) =====
     if (AI_PROVIDER === 'gemini') {
