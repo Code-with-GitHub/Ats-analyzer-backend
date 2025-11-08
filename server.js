@@ -288,7 +288,7 @@ app.get('/api/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log('🚀=================================🚀');
-  console.log(`✅ Server running on https://ats-analyzer-backend.vercel.app/`);
+  console.log(`✅ Server running on http://localhost:${PORT}`);
   console.log(`🤖 Using AI Provider: ${AI_PROVIDER.toUpperCase()}`);
   console.log(`🌐 Frontend allowed from: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
   console.log('🚀=================================🚀');
