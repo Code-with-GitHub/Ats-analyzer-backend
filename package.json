@@ -1,6 +1,6 @@
 {
   "name": "ats-resume-analyzer",
-  "version": "4",
+  "version": "2",
   "node-version":"22.19.0",
   "description": "Backend API for Resume Optimizer using OpenAI/Gemini",
   "main": "api/server", 
